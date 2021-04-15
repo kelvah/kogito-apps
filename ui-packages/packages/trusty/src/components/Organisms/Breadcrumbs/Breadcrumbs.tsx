@@ -14,7 +14,7 @@ const Breadcrumbs = () => {
             return (
               <BreadcrumbItem
                 className="breadcrumb-item"
-                to={match.url}
+                to={`#&{match.url}`}
                 key={match.url}
                 isActive={location.pathname === match.url}
               >
