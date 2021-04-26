@@ -12,6 +12,7 @@ import {
   StackItem,
   Title
 } from '@patternfly/react-core';
+import { debounce } from 'lodash';
 import CounterfactualTable from '../../Organisms/CounterfactualTable/CounterfactualTable';
 import CounterfactualToolbar from '../../Organisms/CounterfactualToolbar/CounterfactualToolbar';
 import CounterfactualInputDomainEdit from '../../Organisms/CounterfactualInputDomainEdit/CounterfactualInputDomainEdit';
@@ -30,6 +31,22 @@ const Counterfactual = () => {
     input: CFSearchInput;
     inputIndex: number;
   }>();
+  const [containerHeight, setContainerHeight] = useState(0);
+
+  useEffect(() => {
+    const getHeight = debounce(() => {
+      const size =
+        window.innerHeight -
+        document.querySelector('.pf-c-page__main-breadcrumb').clientHeight -
+        document.querySelector('.pf-c-page__main-section').clientHeight -
+        document.querySelector('.pf-c-page__header').clientHeight -
+        1;
+      setContainerHeight(size);
+    }, 150);
+    getHeight();
+    window.addEventListener('resize', getHeight);
+    return () => window.removeEventListener('resize', getHeight);
+  }, [containerHeight]);
 
   const handleInputDomainEdit = (input: CFSearchInput, inputIndex: number) => {
     setInputDomainEdit({ input, inputIndex });
@@ -70,7 +87,7 @@ const Counterfactual = () => {
         dispatch({
           type: 'setResults',
           payload: {
-            results: getCFResultsDemo(state.searchDomains, 4)
+            results: getCFResultsDemo(state.searchDomains, 15)
           }
         });
       }, 4000);
@@ -104,8 +121,11 @@ const Counterfactual = () => {
         isExpanded={isSidePanelExpanded}
         className="counterfactual__drawer"
       >
-        <DrawerContent panelContent={panelContent}>
-          <DrawerContentBody style={{ display: 'flex' }}>
+        <DrawerContent
+          panelContent={panelContent}
+          style={{ height: containerHeight }}
+        >
+          <DrawerContentBody style={{ display: 'flex', height: '100%' }}>
             <PageSection variant="light" isFilled={true}>
               <section className="counterfactual__section">
                 <Stack hasGutter>
@@ -128,7 +148,7 @@ const Counterfactual = () => {
                     isVisible={state.status.executionStatus === 'NOT_STARTED'}
                   />
                   <CounterfactualSuccessMessage status={state.status} />
-                  <StackItem>
+                  <StackItem isFilled={true} style={{ overflow: 'hidden' }}>
                     <CounterfactualToolbar
                       status={state.status}
                       goals={state.goals}

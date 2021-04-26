@@ -35,4 +35,111 @@
       clip-path: inset(5px 5px);
     }
   }
+
+  &--with-results {
+    table-layout: fixed;
+
+    thead tr td,
+    thead tr th {
+      position: sticky;
+      z-index: 9999;
+      top: 0;
+      background-clip: padding-box;
+      background-color: #ffffff;
+    }
+
+    thead th:nth-child(-n + 4),
+    thead td:nth-child(-n + 4) {
+      z-index: 10000;
+    }
+    tbody td:nth-child(-n + 4) {
+      background-clip: padding-box;
+      background-color: #ffffff;
+      position: sticky;
+      z-index: 9999;
+    }
+
+    thead th:first-child,
+    tbody td:first-child {
+      left: 0;
+      width: 53px;
+    }
+    thead th:nth-child(2),
+    tbody td:nth-child(2) {
+      left: 53px;
+    }
+    thead th:nth-child(3),
+    tbody td:nth-child(3) {
+      left: 253px;
+    }
+    thead th:nth-child(4),
+    tbody td:nth-child(4) {
+      left: 453px;
+    }
+    thead th:not(:first-child),
+    tbody td:not(:first-child) {
+      width: 200px;
+    }
+  }
+}
+.cf-table-container {
+  &--with-results {
+    position: relative;
+    height: 100%;
+    overflow: auto;
+  }
+}
+
+.cf-table-outer-container {
+  overflow: hidden;
+  height: calc(100% - 80px);
+}
+
+.cf-table-inner-container {
+  height: 100%;
+  overflow: hidden;
+}
+
+@media screen and (min-width: 1600px) {
+  .cf-table--with-results {
+    thead th:first-child,
+    tbody td:first-child {
+      left: 0;
+      width: 53px;
+    }
+    thead th:nth-child(2),
+    tbody td:nth-child(2) {
+      left: 53px;
+    }
+    thead th:nth-child(3),
+    tbody td:nth-child(3) {
+      left: 302px;
+    }
+    thead th:nth-child(4),
+    tbody td:nth-child(4) {
+      left: 552px;
+    }
+    thead th:not(:first-child),
+    tbody td:not(:first-child) {
+      width: 250px;
+    }
+  }
+}
+
+.cf-scroll-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  z-index: 30000;
+  &--vertical,
+  &--horizontal {
+    @extend .cf-scroll-thumb;
+  }
+}
+
+.cf-scroll-track {
+  &--horizontal {
+    width: 100%;
+    bottom: 0;
+    left: 0;
+  }
 }

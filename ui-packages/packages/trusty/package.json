@@ -16,6 +16,7 @@
     "@testing-library/react-hooks": "^3.3.0",
     "date-fns": "^2.14.0",
     "flatpickr": "^4.6.3",
+    "react-custom-scrollbars": "^4.2.1",
     "sass": "^1.26.10",
     "sass-loader": "^9.0.2",
     "typescript": "~3.8.3",
