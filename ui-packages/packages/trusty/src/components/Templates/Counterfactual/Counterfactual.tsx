@@ -40,7 +40,7 @@ const Counterfactual = () => {
         document.querySelector('.pf-c-page__main-breadcrumb').clientHeight -
         document.querySelector('.pf-c-page__main-section').clientHeight -
         document.querySelector('.pf-c-page__header').clientHeight -
-        1;
+        25; // mind the extra space for native scrollbar size
       setContainerHeight(size);
     }, 150);
     getHeight();
@@ -117,55 +117,59 @@ const Counterfactual = () => {
   return (
     <CFDispatch.Provider value={dispatch}>
       <Divider className="counterfactual__divider" />
-      <Drawer
-        isExpanded={isSidePanelExpanded}
-        className="counterfactual__drawer"
-      >
-        <DrawerContent
-          panelContent={panelContent}
-          style={{ height: containerHeight }}
+      {containerHeight > 0 && (
+        <Drawer
+          isExpanded={isSidePanelExpanded}
+          className="counterfactual__drawer"
         >
-          <DrawerContentBody style={{ display: 'flex', height: '100%' }}>
-            <PageSection variant="light" isFilled={true}>
-              <section className="counterfactual__section">
-                <Stack hasGutter>
-                  <StackItem>
-                    <Flex spaceItems={{ default: 'spaceItemsXl' }}>
-                      <FlexItem>
-                        <Title headingLevel="h3" size="2xl">
-                          Counterfactual Analysis
-                        </Title>
-                      </FlexItem>
-                      <FlexItem>
-                        <CounterfactualOutcomesSelected goals={state.goals} />
-                      </FlexItem>
-                      {state.status.executionStatus === 'RUN' && (
-                        <CounterfactualExecutionInfo results={state.results} />
-                      )}
-                    </Flex>
-                  </StackItem>
-                  <CounterfactualHint
-                    isVisible={state.status.executionStatus === 'NOT_STARTED'}
-                  />
-                  <CounterfactualSuccessMessage status={state.status} />
-                  <StackItem isFilled={true} style={{ overflow: 'hidden' }}>
-                    <CounterfactualToolbar
-                      status={state.status}
-                      goals={state.goals}
+          <DrawerContent
+            panelContent={panelContent}
+            style={{ height: containerHeight }}
+          >
+            <DrawerContentBody style={{ display: 'flex', height: '100%' }}>
+              <PageSection variant="light" isFilled={true}>
+                <section className="counterfactual__section">
+                  <Stack hasGutter>
+                    <StackItem>
+                      <Flex spaceItems={{ default: 'spaceItemsXl' }}>
+                        <FlexItem>
+                          <Title headingLevel="h3" size="2xl">
+                            Counterfactual Analysis
+                          </Title>
+                        </FlexItem>
+                        <FlexItem>
+                          <CounterfactualOutcomesSelected goals={state.goals} />
+                        </FlexItem>
+                        {state.status.executionStatus === 'RUN' && (
+                          <CounterfactualExecutionInfo
+                            results={state.results}
+                          />
+                        )}
+                      </Flex>
+                    </StackItem>
+                    <CounterfactualHint
+                      isVisible={state.status.executionStatus === 'NOT_STARTED'}
                     />
-                    <CounterfactualTable
-                      inputs={state.searchDomains}
-                      results={state.results}
-                      status={state.status}
-                      onOpenInputDomainEdit={handleInputDomainEdit}
-                    />
-                  </StackItem>
-                </Stack>
-              </section>
-            </PageSection>
-          </DrawerContentBody>
-        </DrawerContent>
-      </Drawer>
+                    <CounterfactualSuccessMessage status={state.status} />
+                    <StackItem isFilled={true} style={{ overflow: 'hidden' }}>
+                      <CounterfactualToolbar
+                        status={state.status}
+                        goals={state.goals}
+                      />
+                      <CounterfactualTable
+                        inputs={state.searchDomains}
+                        results={state.results}
+                        status={state.status}
+                        onOpenInputDomainEdit={handleInputDomainEdit}
+                      />
+                    </StackItem>
+                  </Stack>
+                </section>
+              </PageSection>
+            </DrawerContentBody>
+          </DrawerContent>
+        </Drawer>
+      )}
     </CFDispatch.Provider>
   );
 };

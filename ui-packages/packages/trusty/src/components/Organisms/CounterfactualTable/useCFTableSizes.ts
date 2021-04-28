@@ -7,19 +7,27 @@ type useCFTableSizesParameters = {
 const useCFTableSizes = (parameters: useCFTableSizesParameters) => {
   const { containerSelector } = parameters;
   const [containerSize, setContainerSize] = useState(0);
+  const [windowSize, setWindowSize] = useState();
 
   useEffect(() => {
-    setContainerSize(document.querySelector(containerSelector).clientWidth);
+    const getContainerSize = () => {
+      const size = document.querySelector(containerSelector).clientWidth - 10;
+      return size < 768 ? 768 : size;
+    };
+
+    setContainerSize(getContainerSize());
+    setWindowSize(window.innerWidth);
 
     const handleWindowResize = debounce(() => {
-      setContainerSize(document.querySelector(containerSelector).clientWidth);
+      setContainerSize(getContainerSize);
+      setWindowSize(window.innerWidth);
     }, 150);
 
     window.addEventListener('resize', handleWindowResize);
     return () => window.removeEventListener('resize', handleWindowResize);
   }, [containerSelector]);
 
-  return { containerSize };
+  return { containerSize, windowSize };
 };
 
 export default useCFTableSizes;

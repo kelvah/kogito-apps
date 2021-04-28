@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Td,
   Thead,
@@ -7,10 +7,20 @@ import {
   TableComposable,
   Tr
 } from '@patternfly/react-table';
-import { Button, Skeleton } from '@patternfly/react-core';
+import {
+  Bullseye,
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStateVariant,
+  Skeleton,
+  Title
+} from '@patternfly/react-core';
 import {
   AngleLeftIcon,
   AngleRightIcon,
+  GhostIcon,
   PlusCircleIcon
 } from '@patternfly/react-icons';
 import { Scrollbars } from 'react-custom-scrollbars';
@@ -21,8 +31,8 @@ import {
   CFStatus
 } from '../../Templates/Counterfactual/Counterfactual';
 import CounterfactualInputDomain from '../../Molecules/CounterfactualInputDomain/CounterfactualInputDomain';
-import './CounterfactualTable.scss';
 import useCFTableSizes from './useCFTableSizes';
+import './CounterfactualTable.scss';
 
 interface CounterfactualTableProps {
   inputs: CFSearchInput[];
@@ -42,37 +52,61 @@ const CounterfactualTable = (props: CounterfactualTableProps) => {
   ];
   const [rows, setRows] = useState<CFSearchInput[]>(inputs);
   const [areAllRowsSelected, setAreAllRowsSelected] = useState(false);
-  // displayed results are the visible portion of cf results
-  const [displayedResultsIndex, setDisplayedResultsIndex] = useState(0);
-  const [displayedResults, setDisplayedResults] = useState(
-    // results.map(result => result.slice(0, 2))
-    [...results]
-  );
+  const [isScrollDisabled, setIsScrollDisabled] = useState({
+    prev: true,
+    next: false
+  });
+  const [displayedResults, setDisplayedResults] = useState(results);
   const [isInputSelectionEnabled, setIsInputSelectionEnabled] = useState<
     boolean
   >();
-  const { containerSize } = useCFTableSizes({
+  const { containerSize, windowSize } = useCFTableSizes({
     containerSelector: '.execution-header'
   });
+  const scrollbars = useRef(null);
 
   useEffect(() => {
     setIsInputSelectionEnabled(status.executionStatus === 'NOT_STARTED');
   }, [status]);
 
   const slideResults = (action: 'next' | 'prev') => {
-    let newIndex;
+    // current scrolling position
+    const currentPosition = scrollbars.current.getScrollLeft();
+    // window width
+    const width = window.innerWidth;
+    // size of a result column
+    const stepSize = width > 1600 ? 250 : 200;
+    let scrollIndex;
     switch (action) {
       case 'prev':
-        newIndex = displayedResultsIndex - 1;
+        scrollIndex = Math.abs(Math.round(currentPosition / stepSize) - 1);
         break;
       case 'next':
-        newIndex = displayedResultsIndex + 1;
+        scrollIndex = Math.round(currentPosition / stepSize) + 1;
         break;
     }
-    setDisplayedResultsIndex(newIndex);
-    setDisplayedResults(
-      results.map(result => result.slice(newIndex, newIndex + 2))
-    );
+    const scrollPosition = stepSize * scrollIndex;
+    scrollbars.current.view.scroll({
+      left: scrollPosition,
+      behavior: 'smooth'
+    });
+  };
+
+  const onScrollUpdate = () => {
+    const width = scrollbars.current.getClientWidth();
+    const scrollWidth = scrollbars.current.getScrollWidth();
+    const currentPosition = scrollbars.current.getScrollLeft();
+
+    console.log('checking scroll enabled/disabled status');
+    if (scrollWidth - currentPosition - width < 10) {
+      // disabling next button when reaching the right limit (with some tolerance)
+      setIsScrollDisabled({ prev: false, next: true });
+    } else if (currentPosition < 10) {
+      // disabling prev button when at the start (again with tolerance)
+      setIsScrollDisabled({ prev: true, next: false });
+    } else {
+      setIsScrollDisabled({ prev: false, next: false });
+    }
   };
 
   const onSelectAll = (event, isSelected: boolean) => {
@@ -99,19 +133,8 @@ const CounterfactualTable = (props: CounterfactualTableProps) => {
   }, [inputs]);
 
   useEffect(() => {
-    // setDisplayedResults(
-    //   results.length
-    //     ? results.map(result =>
-    //         result.slice(displayedResultsIndex, displayedResultsIndex + 2)
-    //       )
-    //     : []
-    // );
     setDisplayedResults(results);
-  }, [results, displayedResultsIndex]);
-
-  // const renderThumb = ({ style, ...props }) => {
-  //   return <div style={{ ...style }} {...props} className="cf-scroll-thumb" />;
-  // };
+  }, [results]);
 
   const handleScrollbarRendering = (cssClass: string) => {
     return ({ style, ...props }) => {
@@ -120,178 +143,204 @@ const CounterfactualTable = (props: CounterfactualTableProps) => {
   };
 
   return (
-    <div className="cf-table-outer-container">
-      <div className="cf-table-inner-container">
-        <div
-          className="cf-table-container cf-table-container--with-results"
-          style={{ width: containerSize }}
-        >
-          <Scrollbars
-            style={{ width: containerSize, height: '100%' }}
-            renderTrackHorizontal={({ style, ...props }) => (
+    <>
+      {windowSize <= 768 && (
+        <Bullseye>
+          <EmptyState variant={EmptyStateVariant.xs}>
+            <EmptyStateIcon icon={GhostIcon} />
+            <Title headingLevel="h4" size="md">
+              CF implementation for mobile phones
+            </Title>
+            <EmptyStateBody>workin on it</EmptyStateBody>
+          </EmptyState>
+        </Bullseye>
+      )}
+      {windowSize > 768 && (
+        <div className="cf-table-outer-container">
+          <div className="cf-table-inner-container">
+            {containerSize > 0 && (
               <div
-                style={{ ...style }}
-                {...props}
-                className="cf-scroll-track--horizontal"
-              />
-            )}
-            renderThumbHorizontal={handleScrollbarRendering(
-              'cf-scroll-thumb--horizontal'
-            )}
-            renderThumbVertical={handleScrollbarRendering(
-              'cf-scroll-thumb--vertical'
-            )}
-          >
-            <TableComposable
-              aria-label="Counterfactual Table"
-              className="cf-table cf-table--with-results"
-            >
-              <Thead>
-                <Tr>
-                  {isInputSelectionEnabled ? (
-                    <Th
-                      select={{
-                        onSelect: onSelectAll,
-                        isSelected: areAllRowsSelected
-                      }}
-                    />
-                  ) : (
-                    <Th />
+                className="cf-table-container cf-table-container--with-results"
+                style={{ width: containerSize }}
+              >
+                <Scrollbars
+                  style={{ width: containerSize, height: '100%' }}
+                  renderTrackHorizontal={handleScrollbarRendering(
+                    'cf-table__scroll-track--horizontal'
                   )}
-
-                  <Th>{columns[0]}</Th>
-                  <Th>{columns[1]}</Th>
-                  <Th>{columns[2]}</Th>
-                  {displayedResults.length > 0 &&
-                    displayedResults[0].map((result, index) => (
-                      <Th
-                        key={`result ${index}`}
-                        className={`cf-table__result-head ${
-                          index === 0
-                            ? 'cf-table__result-head--first'
-                            : index === displayedResults[0].length - 1
-                            ? 'cf-table__result-head--last'
-                            : ''
-                        }`}
-                      >
-                        {index === 0 && (
-                          <Button
-                            variant="link"
-                            isInline={true}
-                            aria-label="Previous results"
-                            className="cf-table__result-head__slider"
-                            isDisabled={displayedResultsIndex === index}
-                            onClick={() => slideResults('prev')}
-                          >
-                            <AngleLeftIcon />
-                          </Button>
-                        )}
-                        <span>Counterfactual Result</span>
-                        {index === displayedResults[0].length - 1 && (
-                          <Button
-                            variant="link"
-                            isInline={true}
-                            aria-label="Next results"
-                            className="cf-table__result-head__slider"
-                            isDisabled={
-                              results[0] &&
-                              results[0].length ===
-                                displayedResultsIndex +
-                                  displayedResults[0].length
-                            }
-                            onClick={() => slideResults('next')}
-                          >
-                            <AngleRightIcon />
-                          </Button>
-                        )}
-                      </Th>
-                    ))}
-                  {displayedResults.length === 0 && (
-                    <>
-                      <Th key="empty-results-1">
-                        <span>Counterfactual Result</span>
-                      </Th>
-                      <Th key="empty-results-2" />
-                    </>
+                  renderThumbHorizontal={handleScrollbarRendering(
+                    'cf-table__scroll-thumb--horizontal'
                   )}
-                </Tr>
-              </Thead>
-              <Tbody>
-                {rows.map((row, rowIndex) => (
-                  <Tr key={rowIndex}>
-                    <Td
-                      key={`${rowIndex}_0`}
-                      select={{
-                        rowIndex,
-                        onSelect,
-                        isSelected: !row.isFixed,
-                        disable: !isInputSelectionEnabled
-                      }}
-                    />
-                    <Td key={`${rowIndex}_1`} dataLabel={columns[0]}>
-                      {row.name}
-                    </Td>
-                    <Td key={`${rowIndex}_2`} dataLabel={columns[1]}>
-                      {!isInputSelectionEnabled && row.domain && (
-                        <CounterfactualInputDomain input={row} />
-                      )}
-                      {isInputSelectionEnabled && canAddConstraint(row) && (
-                        <Button
-                          variant={'link'}
-                          isInline={true}
-                          onClick={() => onOpenInputDomainEdit(row, rowIndex)}
-                          icon={!row.domain && <PlusCircleIcon />}
-                          isDisabled={row.isFixed}
-                        >
-                          {row.domain ? (
-                            <CounterfactualInputDomain input={row} />
-                          ) : (
-                            <>Constraint</>
-                          )}
-                        </Button>
-                      )}
-                    </Td>
-                    <Td key={`${rowIndex}_3`} dataLabel={columns[2]}>
-                      {row.value.toString()}
-                    </Td>
-                    {displayedResults.length > 0 &&
-                      displayedResults[rowIndex].map((value, index) => (
-                        <Td
-                          key={`${rowIndex}_${index + 4}`}
-                          dataLabel={'Counterfactual Result'}
-                          className={
-                            value !== row.value
-                              ? 'cf-table__result-value--changed'
-                              : 'cf-table__result-value'
-                          }
-                        >
-                          {value.toString()}
-                        </Td>
-                      ))}
-                    {displayedResults.length === 0 &&
-                      status.executionStatus === 'RUNNING' && (
-                        <Td key="results loading">
-                          <Skeleton
-                            width="50%"
-                            screenreaderText="Loading results"
+                  renderThumbVertical={handleScrollbarRendering(
+                    'cf-table__scroll-thumb--vertical'
+                  )}
+                  renderView={handleScrollbarRendering(
+                    'box cf-table__scroll-area'
+                  )}
+                  onScrollStop={onScrollUpdate}
+                  ref={scrollbars}
+                >
+                  <TableComposable
+                    aria-label="Counterfactual Table"
+                    className="cf-table cf-table--with-results"
+                  >
+                    <Thead>
+                      <Tr>
+                        {isInputSelectionEnabled ? (
+                          <Th
+                            select={{
+                              onSelect: onSelectAll,
+                              isSelected: areAllRowsSelected
+                            }}
                           />
-                        </Td>
-                      )}
-                    {displayedResults.length === 0 &&
-                      status.executionStatus === 'NOT_STARTED' && (
-                        <>
-                          <Td key="empty-results-1">No available results</Td>
-                          <Td key="empty-results-2" />
-                        </>
-                      )}
-                  </Tr>
-                ))}
-              </Tbody>
-            </TableComposable>
-          </Scrollbars>
+                        ) : (
+                          <Th />
+                        )}
+
+                        <Th>{columns[0]}</Th>
+                        <Th>{columns[1]}</Th>
+                        <Th>{columns[2]}</Th>
+                        {displayedResults.length > 1 && (
+                          <Th className="cf-table__slider-cell">
+                            <Button
+                              variant="link"
+                              isInline={true}
+                              aria-label="Previous results"
+                              className="cf-table__slider-cell__slider"
+                              isDisabled={isScrollDisabled.prev}
+                              onClick={() => slideResults('prev')}
+                            >
+                              <AngleLeftIcon />
+                            </Button>
+                          </Th>
+                        )}
+                        {displayedResults.length > 0 &&
+                          displayedResults[0].map((result, index) => (
+                            <Th key={`result ${index}`}>
+                              <span>Counterfactual Result</span>
+                            </Th>
+                          ))}
+                        {displayedResults.length > 1 && (
+                          <Th className="cf-table__slider-cell">
+                            <Button
+                              variant="link"
+                              isInline={true}
+                              aria-label="Next results"
+                              className="cf-table__slider-cell__slider"
+                              isDisabled={isScrollDisabled.next}
+                              onClick={() => slideResults('next')}
+                            >
+                              <AngleRightIcon />
+                            </Button>
+                          </Th>
+                        )}
+                        {displayedResults.length === 0 && (
+                          <>
+                            <Th key="empty-results-1">
+                              <span>Counterfactual Result</span>
+                            </Th>
+                            <Th key="empty-results-2" />
+                          </>
+                        )}
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {rows.map((row, rowIndex) => (
+                        <Tr key={rowIndex}>
+                          <Td
+                            key={`${rowIndex}_0`}
+                            select={{
+                              rowIndex,
+                              onSelect,
+                              isSelected: !row.isFixed,
+                              disable: !isInputSelectionEnabled
+                            }}
+                          />
+                          <Td key={`${rowIndex}_1`} dataLabel={columns[0]}>
+                            {row.name}
+                          </Td>
+                          <Td key={`${rowIndex}_2`} dataLabel={columns[1]}>
+                            {!isInputSelectionEnabled && row.domain && (
+                              <CounterfactualInputDomain input={row} />
+                            )}
+                            {isInputSelectionEnabled && canAddConstraint(row) && (
+                              <Button
+                                variant={'link'}
+                                isInline={true}
+                                onClick={() =>
+                                  onOpenInputDomainEdit(row, rowIndex)
+                                }
+                                icon={!row.domain && <PlusCircleIcon />}
+                                isDisabled={row.isFixed}
+                              >
+                                {row.domain ? (
+                                  <CounterfactualInputDomain input={row} />
+                                ) : (
+                                  <>Constraint</>
+                                )}
+                              </Button>
+                            )}
+                          </Td>
+                          <Td key={`${rowIndex}_3`} dataLabel={columns[2]}>
+                            {row.value.toString()}
+                          </Td>
+                          {displayedResults.length > 1 && (
+                            <Td className="cf-table__slider-cell" />
+                          )}
+                          {displayedResults.length > 0 &&
+                            displayedResults[rowIndex].map((value, index) => (
+                              <Td
+                                key={`${rowIndex}_${index + 4}`}
+                                dataLabel={'Counterfactual Result'}
+                                className={
+                                  value !== row.value
+                                    ? 'cf-table__result-value--changed'
+                                    : 'cf-table__result-value'
+                                }
+                              >
+                                {value.toString()}
+                              </Td>
+                            ))}
+                          {displayedResults.length > 1 && (
+                            <Td className="cf-table__slider-cell" />
+                          )}
+                          {displayedResults.length === 0 &&
+                            status.executionStatus === 'RUNNING' && (
+                              <>
+                                <Td key="results-loading-1">
+                                  <Skeleton
+                                    width="85%"
+                                    screenreaderText="Loading results"
+                                  />
+                                </Td>
+                                <Td key="results-loading-2">
+                                  <Skeleton
+                                    width="85%"
+                                    screenreaderText="Loading results"
+                                  />
+                                </Td>
+                              </>
+                            )}
+                          {displayedResults.length === 0 &&
+                            status.executionStatus === 'NOT_STARTED' && (
+                              <>
+                                <Td key="empty-results-1">
+                                  No available results
+                                </Td>
+                                <Td key="empty-results-2" />
+                              </>
+                            )}
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </TableComposable>
+                </Scrollbars>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
