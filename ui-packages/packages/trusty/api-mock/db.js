@@ -1,10 +1,10 @@
 const faker = require('faker');
-//const inputDataWithScores = require('./mocks/inputDataWithScores');
 const inputData = require('./mocks/inputData');
 const outcomeData = require('./mocks/outcomes');
 const outcomeDetailData = require('./mocks/outcomeDetail');
 const modelData = require('./mocks/modelData');
 const salienciesData = require('./mocks/saliencies');
+const cfData = require('./mocks/counterfactuals');
 const executionIdBase = require('./mocks/executionIdBase');
 
 let generateFakeAPIs = () => {
@@ -46,7 +46,8 @@ let generateFakeAPIs = () => {
     outcomes: outcomeData,
     outcomeDetail: outcomeDetailData,
     models: modelData,
-    saliencies: salienciesData
+    saliencies: salienciesData,
+    counterfactuals: cfData
   };
 };
 
