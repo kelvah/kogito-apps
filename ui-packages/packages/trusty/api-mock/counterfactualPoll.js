@@ -82,6 +82,14 @@ function getResult(executionId, baseId, isFinal) {
         return {
           ...input,
           value: Math.floor(
+            Math.random() * input.value * 0.2 * -1 + input.value
+          )
+        };
+      }
+      if (index === 1) {
+        return {
+          ...input,
+          value: Math.floor(
             Math.random() * input.value * 0.2 * (Math.random() > 0.5 ? 1 : -1) +
               input.value
           )
