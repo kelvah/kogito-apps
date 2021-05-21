@@ -1,5 +1,6 @@
 import React from 'react';
 import { CFSearchInput } from '../../../types';
+import FormattedValue from '../../Atoms/FormattedValue/FormattedValue';
 
 type CounterfactualInputDomainProps = {
   input: CFSearchInput;
@@ -13,7 +14,8 @@ const CounterfactualInputDomain = ({
     case 'numerical':
       domain = (
         <span>
-          {input.domain.lowerBound}-{input.domain.upperBound}
+          <FormattedValue value={input.domain.lowerBound} />-
+          <FormattedValue value={input.domain.upperBound} />
         </span>
       );
       break;

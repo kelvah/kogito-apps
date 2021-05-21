@@ -43,6 +43,8 @@ const FormattedValue = (props: FormattedValueProps) => {
 
   switch (typeof value) {
     case 'number':
+      formattedValue = new Intl.NumberFormat().format(value);
+      break;
     case 'bigint':
     case 'string':
       formattedValue = value;
