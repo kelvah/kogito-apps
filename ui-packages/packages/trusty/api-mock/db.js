@@ -14,7 +14,7 @@ let generateFakeAPIs = () => {
     executionId: executionIdBase + 1000,
     executionDate: faker.date.recent(),
     executionType: 'DECISION',
-    executedModelName: 'fraud-score',
+    executedModelName: 'mortgage approval',
     executionSucceeded: true,
     executorName: 'Technical User'
   });

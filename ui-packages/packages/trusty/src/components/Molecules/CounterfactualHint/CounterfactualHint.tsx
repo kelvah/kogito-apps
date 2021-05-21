@@ -59,8 +59,8 @@ const CounterfactualHint = (props: CounterfactualHintProps) => {
           >
             <HintTitle>Create a counterfactual</HintTitle>
             <HintBody>
-              Select a desired counterfactual Outcome; one or more Data Types,
-              and modify the input constraints.
+              Select a desired counterfactual Outcome; one or more Inputs, and
+              set the Input constraints.
             </HintBody>
             {/*<HintFooter>*/}
             {/*  <Button variant="link" isInline>*/}
