@@ -278,5 +278,57 @@ const inputData = [
     ]
   }
 ];
+const inputDData = [
+  {
+    kind: 'UNIT',
+    name: 'Loan Amount',
+    typeRef: 'number',
+    components: null,
+    value: 300000.0
+  },
+  {
+    kind: 'UNIT',
+    name: 'Appraised Value',
+    typeRef: 'number',
+    components: null,
+    value: 500000.0
+  },
+  {
+    kind: 'STRUCTURE',
+    name: 'Borrower',
+    typeRef: 'tBorrower',
+    components: [
+      {
+        kind: 'UNIT',
+        name: 'Monthly Other Debt',
+        typeRef: 'number',
+        components: null,
+        value: 1000.0
+      },
+      {
+        kind: 'UNIT',
+        name: 'Monthly Income',
+        typeRef: 'number',
+        components: null,
+        value: 10000.0
+      }
+    ],
+    value: null
+  },
+  {
+    kind: 'UNIT',
+    name: 'Credit Score',
+    typeRef: 'tCreditScore',
+    components: null,
+    value: 600.0
+  },
+  {
+    kind: 'UNIT',
+    name: 'Best Rate',
+    typeRef: 'number',
+    components: null,
+    value: 0.03
+  }
+];
 
-exports.inputs = inputData;
+exports.inputs = inputDData;

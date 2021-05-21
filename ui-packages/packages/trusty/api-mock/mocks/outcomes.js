@@ -8,7 +8,7 @@ const twoSimpleOutcomes = [
     outcomeResult: {
       name: 'Mortgage Approval',
       typeRef: 'boolean',
-      value: null,
+      value: false,
       components: null
     },
     messages: [],
@@ -21,7 +21,7 @@ const twoSimpleOutcomes = [
     outcomeResult: {
       name: 'Risk Score',
       typeRef: 'number',
-      value: 21.7031851958099,
+      value: 21,
       components: null
     },
     messages: [],
