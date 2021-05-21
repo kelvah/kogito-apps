@@ -288,32 +288,17 @@ const inputDData = [
   },
   {
     kind: 'UNIT',
+    name: 'Down Payment',
+    typeRef: 'number',
+    components: null,
+    value: 100000.0
+  },
+  {
+    kind: 'UNIT',
     name: 'Appraised Value',
     typeRef: 'number',
     components: null,
     value: 500000.0
-  },
-  {
-    kind: 'STRUCTURE',
-    name: 'Borrower',
-    typeRef: 'tBorrower',
-    components: [
-      {
-        kind: 'UNIT',
-        name: 'Monthly Other Debt',
-        typeRef: 'number',
-        components: null,
-        value: 1000.0
-      },
-      {
-        kind: 'UNIT',
-        name: 'Monthly Income',
-        typeRef: 'number',
-        components: null,
-        value: 10000.0
-      }
-    ],
-    value: null
   },
   {
     kind: 'UNIT',

@@ -38,6 +38,113 @@ const outcome = [
       executionType: 'DECISION',
       executorName: 'Technical User'
     },
+    outcomes: twoSimpleOutcomes
+  },
+  {
+    header: {
+      executionDate: '2020-04-16',
+      executionId: executionIdBase + '1001',
+      executionSucceeded: true,
+      executionType: 'DECISION',
+      executorName: 'Technical User'
+    },
+    outcomes: [
+      {
+        outcomeId: '_c6e56793-68d0-4683-b34b-5e9d69e7d0d4',
+        outcomeName: 'Risk Score',
+        evaluationStatus: 'SUCCEEDED',
+        outcomeResult: {
+          name: 'Risk Score',
+          typeRef: 'number',
+          value: 1,
+          components: null
+        },
+        messages: [],
+        hasErrors: false
+      },
+      {
+        outcomeId: '_859bea4f-dfc4-480e-96f2-1a756d54b84b',
+        outcomeName: 'Total Amount from Last 24 hours Transactions',
+        evaluationStatus: 'SUCCEEDED',
+        outcomeResult: {
+          name: 'Total Amount from Last 24 hours Transactions',
+          typeRef: 'number',
+          value: 0,
+          components: null
+        },
+        messages: [],
+        hasErrors: false
+      },
+      {
+        outcomeId: '_d361c79e-8c06-4504-bdb2-d6b90b915166',
+        outcomeName: 'Last Transaction',
+        evaluationStatus: 'SUCCEEDED',
+        outcomeResult: {
+          name: 'Last Transaction',
+          typeRef: 'tTransaction',
+          value: null,
+          components: [
+            {
+              name: 'Auth Code',
+              typeRef: 'tAuthCode',
+              value: 'Authorized',
+              components: null
+            },
+            {
+              name: 'Amount',
+              typeRef: 'number',
+              value: 10000,
+              components: null
+            },
+            {
+              name: 'Card Type',
+              typeRef: 'tCardType',
+              value: 'Debit',
+              components: null
+            },
+            {
+              name: 'Location',
+              typeRef: 'tLocation',
+              value: 'Local',
+              components: null
+            }
+          ]
+        },
+        messages: [],
+        hasErrors: false
+      },
+      {
+        outcomeId: '_ff34378e-fe90-4c58-9f7f-b9ce5767a415',
+        outcomeName: 'Merchant Blacklist',
+        evaluationStatus: 'SUCCEEDED',
+        outcomeResult: {
+          name: 'Merchant Blacklist',
+          typeRef: 'string',
+          value: [
+            'ILLICITCORP',
+            'SLIMSHADY',
+            'TAINTEDTHINGS',
+            'UNSCRUPULOUS',
+            'UNETHICALBIZ',
+            'WECORRUPT',
+            'WICKEDSTUFF',
+            'VERYBADTHING'
+          ],
+          components: null
+        },
+        messages: [],
+        hasErrors: false
+      }
+    ]
+  },
+  {
+    header: {
+      executionDate: '2020-04-16',
+      executionId: executionIdBase + '1002',
+      executionSucceeded: true,
+      executionType: 'DECISION',
+      executorName: 'Technical User'
+    },
     outcomes: [
       {
         outcomeId: '_3QDC8C35-4EB3-451E-874C-DB27A5D6T8Q2',
@@ -395,113 +502,6 @@ const outcome = [
         }
       }
     ]
-  },
-  {
-    header: {
-      executionDate: '2020-04-16',
-      executionId: executionIdBase + '1001',
-      executionSucceeded: true,
-      executionType: 'DECISION',
-      executorName: 'Technical User'
-    },
-    outcomes: [
-      {
-        outcomeId: '_c6e56793-68d0-4683-b34b-5e9d69e7d0d4',
-        outcomeName: 'Risk Score',
-        evaluationStatus: 'SUCCEEDED',
-        outcomeResult: {
-          name: 'Risk Score',
-          typeRef: 'number',
-          value: 1,
-          components: null
-        },
-        messages: [],
-        hasErrors: false
-      },
-      {
-        outcomeId: '_859bea4f-dfc4-480e-96f2-1a756d54b84b',
-        outcomeName: 'Total Amount from Last 24 hours Transactions',
-        evaluationStatus: 'SUCCEEDED',
-        outcomeResult: {
-          name: 'Total Amount from Last 24 hours Transactions',
-          typeRef: 'number',
-          value: 0,
-          components: null
-        },
-        messages: [],
-        hasErrors: false
-      },
-      {
-        outcomeId: '_d361c79e-8c06-4504-bdb2-d6b90b915166',
-        outcomeName: 'Last Transaction',
-        evaluationStatus: 'SUCCEEDED',
-        outcomeResult: {
-          name: 'Last Transaction',
-          typeRef: 'tTransaction',
-          value: null,
-          components: [
-            {
-              name: 'Auth Code',
-              typeRef: 'tAuthCode',
-              value: 'Authorized',
-              components: null
-            },
-            {
-              name: 'Amount',
-              typeRef: 'number',
-              value: 10000,
-              components: null
-            },
-            {
-              name: 'Card Type',
-              typeRef: 'tCardType',
-              value: 'Debit',
-              components: null
-            },
-            {
-              name: 'Location',
-              typeRef: 'tLocation',
-              value: 'Local',
-              components: null
-            }
-          ]
-        },
-        messages: [],
-        hasErrors: false
-      },
-      {
-        outcomeId: '_ff34378e-fe90-4c58-9f7f-b9ce5767a415',
-        outcomeName: 'Merchant Blacklist',
-        evaluationStatus: 'SUCCEEDED',
-        outcomeResult: {
-          name: 'Merchant Blacklist',
-          typeRef: 'string',
-          value: [
-            'ILLICITCORP',
-            'SLIMSHADY',
-            'TAINTEDTHINGS',
-            'UNSCRUPULOUS',
-            'UNETHICALBIZ',
-            'WECORRUPT',
-            'WICKEDSTUFF',
-            'VERYBADTHING'
-          ],
-          components: null
-        },
-        messages: [],
-        hasErrors: false
-      }
-    ]
-  },
-  {
-    header: {
-      executionDate: '2020-04-16',
-      executionId: executionIdBase + '1002',
-      executionSucceeded: true,
-      executionType: 'DECISION',
-      executorName: 'Technical User'
-    },
-    outcomes: twoSimpleOutcomes
   },
   {
     header: {
