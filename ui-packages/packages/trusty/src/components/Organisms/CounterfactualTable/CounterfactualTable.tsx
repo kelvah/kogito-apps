@@ -332,7 +332,7 @@ const CounterfactualTable = (props: CounterfactualTableProps) => {
                               onSelect,
                               isSelected: row.isFixed === false,
                               disable: !(
-                                isInputSelectionEnabled && canSelectInput(row)
+                                isInputSelectionEnabled && canAddConstraint(row)
                               )
                             }}
                           />
@@ -351,6 +351,7 @@ const CounterfactualTable = (props: CounterfactualTableProps) => {
                                   onOpenInputDomainEdit(row, rowIndex)
                                 }
                                 icon={!row.domain && <PlusCircleIcon />}
+                                isDisabled={row.isFixed}
                                 className={'counterfactual-constraint-edit'}
                               >
                                 {row.domain ? (
