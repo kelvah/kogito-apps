@@ -137,16 +137,18 @@ export const cfInitState = (parameters): CFState => {
     },
     results: []
   };
-  initialState.goals = outcomes.map(outcome => {
-    return {
-      id: outcome.outcomeId,
-      name: outcome.outcomeName,
-      typeRef: outcome.outcomeResult.typeRef,
-      value: outcome.outcomeResult.value,
-      originalValue: outcome.outcomeResult.value,
-      isFixed: true
-    };
-  });
+  initialState.goals = outcomes
+    .filter(outcome => outcome.outcomeResult !== null)
+    .map(outcome => {
+      return {
+        id: outcome.outcomeId,
+        name: outcome.outcomeName,
+        typeRef: outcome.outcomeResult.typeRef,
+        value: outcome.outcomeResult.value,
+        originalValue: outcome.outcomeResult.value,
+        isFixed: true
+      };
+    });
 
   initialState.searchDomains = convertInputToSearchDomain(inputs);
 
